@@ -189,6 +189,7 @@ public class LoginWindow extends JFrame implements LibWindow {
     		butn.addActionListener(evt -> {
 				try{
 					ci.login(username.getText(),password.getText());
+					System.out.println(ci.getCurrentUser());
 					JOptionPane.showMessageDialog(this,"Successful Login");
 					LibWindow mainWindow = MainWindow.INSTANCE;
 					mainWindow.init();

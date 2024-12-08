@@ -15,6 +15,14 @@ public class MainWindow extends JFrame implements LibWindow {
 
     private boolean isInitialized = false;
     JPanel mainPanel;
+    MainWindowPanel welcomePanel;
+    MainWindowPanel addMemberPanel;
+    MainWindowPanel editMemberPanel;
+    MainWindowPanel addBookPanel;
+    MainWindowPanel addBookCopyPanel;
+    MainWindowPanel checkoutBookPanel;
+    MainWindowPanel printCheckoutRecordPanel;
+    MainWindowPanel searchOverdueBooksPanel;
     JMenuBar menuBar;
 
     // Menus
@@ -42,6 +50,9 @@ public class MainWindow extends JFrame implements LibWindow {
 
     private User loggedInUser; // Assumes a user is set before init is called
 
+    // Panel keys
+
+
     private MainWindow() {}
 
     // Method to supply the logged-in user before init is called
@@ -61,13 +72,18 @@ public class MainWindow extends JFrame implements LibWindow {
 
     @Override
     public void init() {
+        User user = (new SystemController()).getCurrentUser();
+        setLoggedInUser(user);
+        System.out.println(user);
         createMenus();
         setupContent();
         setSize(660,500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+
+
         isInitialized = true;
-        setLoggedInUser(SystemController.currentUser);
     }
 
     private void createMenus() {
@@ -78,96 +94,142 @@ public class MainWindow extends JFrame implements LibWindow {
     }
 
     private void addMenuItems() {
-        // File Menu
-        fileMenu = new JMenu("File");
-        logoutItem = new JMenuItem("Logout");
-        exitItem = new JMenuItem("Exit");
-        fileMenu.add(logoutItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitItem);
+        // File menu is always present
+        fileMenu = createFileMenu();
         menuBar.add(fileMenu);
 
-        // Add Action Listeners for File Menu
-        exitItem.addActionListener(e -> System.exit(0));
-        logoutItem.addActionListener(e -> {
-            // Implement logout logic: close this window and show login window
-            // For example:
-            ci.logout();
-            setVisible(false);
-            LoginWindow.INSTANCE.setVisible(true);
-        });
-
-        // Based on role, show/hide menus
-        // If User is ADMIN or BOTH
-        if (loggedInUser != null && (loggedInUser.getAuthorization() == Auth.ADMIN || loggedInUser.getAuthorization() == Auth.BOTH)) {
-            memberMenu = new JMenu("Member");
-            addMemberItem = new JMenuItem("Add Member");
-            editMemberItem = new JMenuItem("Edit Member Info");
-            memberMenu.add(addMemberItem);
-            memberMenu.add(editMemberItem);
-
-            // Add action listeners for member items
-            addMemberItem.addActionListener(e -> {
-                // Show AddMemberWindow dialog
-            });
-            editMemberItem.addActionListener(e -> {
-                // Show EditMemberWindow dialog or search member dialog
-            });
-
-            bookMenu = new JMenu("Book");
-            addBookItem = new JMenuItem("Add Book"); // Optional use case
-            addBookCopyItem = new JMenuItem("Add Book Copy");
-            bookMenu.add(addBookItem);
-            bookMenu.add(addBookCopyItem);
-
-            // Add action listeners for book items
-            addBookItem.addActionListener(e -> {
-                // Show AddBookWindow
-            });
-            addBookCopyItem.addActionListener(e -> {
-                // Show AddBookCopyWindow
-            });
-
+        if (isAdminOrBoth()) {
+            memberMenu = createMemberMenu();
+            bookMenu = createBookMenu();
             menuBar.add(memberMenu);
             menuBar.add(bookMenu);
         }
 
-        // If User is LIBRARIAN or BOTH
-        if (loggedInUser != null && (loggedInUser.getAuthorization() == Auth.LIBRARIAN || loggedInUser.getAuthorization() == Auth.BOTH)) {
-            checkoutMenu = new JMenu("Checkout");
-            checkoutBookItem = new JMenuItem("Checkout Book");
-            printCheckoutRecordItem = new JMenuItem("Print Checkout Record"); // optional
-            searchOverdueBooksItem = new JMenuItem("Search Overdue Books");    // optional
-
-            checkoutMenu.add(checkoutBookItem);
-            checkoutMenu.add(printCheckoutRecordItem);
-            checkoutMenu.add(searchOverdueBooksItem);
-
-            // Add action listeners for checkout menu items
-            checkoutBookItem.addActionListener(e -> {
-                // Show CheckoutBookWindow
-            });
-            printCheckoutRecordItem.addActionListener(e -> {
-                // Print record to console or show dialog
-            });
-            searchOverdueBooksItem.addActionListener(e -> {
-                // Show OverdueBookSearchWindow
-            });
-
+        if (isLibrarianOrBoth()) {
+            checkoutMenu = createCheckoutMenu();
             menuBar.add(checkoutMenu);
         }
     }
 
+    private JMenu createFileMenu() {
+        JMenu menu = new JMenu("File");
+        logoutItem = new JMenuItem("Logout");
+        exitItem = new JMenuItem("Exit");
+
+        logoutItem.addActionListener(e -> {
+            // Implement logout logic
+        });
+        exitItem.addActionListener(e -> System.exit(0));
+
+        menu.add(logoutItem);
+        menu.addSeparator();
+        menu.add(exitItem);
+
+        return menu;
+    }
+
+    private JMenu createMemberMenu() {
+        JMenu menu = new JMenu("Member");
+        addMemberItem = new JMenuItem("Add Member");
+//        editMemberItem = new JMenuItem("Edit Member Info");
+
+        addMemberItem.addActionListener(e -> {
+            showPanel(addMemberPanel);
+        });
+//        editMemberItem.addActionListener(e -> {
+//            showPanel(editMemberPanel);
+//        });
+
+        menu.add(addMemberItem);
+//        menu.add(editMemberItem);
+        return menu;
+    }
+
+    private JMenu createBookMenu() {
+        JMenu menu = new JMenu("Book");
+        addBookItem = new JMenuItem("Add Book");
+        addBookCopyItem = new JMenuItem("Add Book Copy");
+
+        addBookItem.addActionListener(e -> {
+            showPanel(addBookPanel);
+        });
+        addBookCopyItem.addActionListener(e -> {
+            showPanel(addBookCopyPanel);
+        });
+
+        menu.add(addBookItem);
+        menu.add(addBookCopyItem);
+        return menu;
+    }
+
+    private JMenu createCheckoutMenu() {
+        JMenu menu = new JMenu("Checkout");
+        checkoutBookItem = new JMenuItem("Checkout Book");
+        printCheckoutRecordItem = new JMenuItem("Print Checkout Record");
+        searchOverdueBooksItem = new JMenuItem("Search Overdue Books");
+
+        checkoutBookItem.addActionListener(e -> {
+            showPanel(checkoutBookPanel);
+        });
+        printCheckoutRecordItem.addActionListener(e -> {
+            showPanel(printCheckoutRecordPanel);
+        });
+        searchOverdueBooksItem.addActionListener(e -> {
+            showPanel(searchOverdueBooksPanel);
+        });
+
+        menu.add(checkoutBookItem);
+        menu.add(printCheckoutRecordItem);
+        menu.add(searchOverdueBooksItem);
+
+        return menu;
+    }
+
+    private boolean isAdminOrBoth() {
+        return loggedInUser != null && (loggedInUser.getAuthorization() == Auth.ADMIN || loggedInUser.getAuthorization() == Auth.BOTH);
+    }
+
+    private boolean isLibrarianOrBoth() {
+        return loggedInUser != null && (loggedInUser.getAuthorization() == Auth.LIBRARIAN || loggedInUser.getAuthorization() == Auth.BOTH);
+    }
     private void setupContent() {
-        mainPanel = new JPanel(new BorderLayout());
-        JLabel welcomeLabel;
-        if (loggedInUser != null) {
-            welcomeLabel = new JLabel("Welcome, " + loggedInUser.getId() + "!");
-        } else {
-            welcomeLabel = new JLabel("Welcome!");
-        }
-        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        mainPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        mainPanel = new JPanel();
+
+        welcomePanel = new WelcomePanel("welcome, "+loggedInUser.getId(),()->{
+            this.showPanel(welcomePanel);
+        });
+        addMemberPanel = new AddMemberPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        editMemberPanel = new EditMemberPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        addBookPanel = new AddBookPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        addBookCopyPanel = new AddBookCopyPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        checkoutBookPanel = new CheckoutBookPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        printCheckoutRecordPanel = new PrintCheckoutRecordPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+        searchOverdueBooksPanel = new OverdueBookSearchPanel(()->{
+            this.showPanel(welcomePanel);
+        });
+
         getContentPane().add(mainPanel);
+        showPanel(welcomePanel);
+    }
+
+    private void showPanel(MainWindowPanel panel) {
+        mainPanel.removeAll();
+        panel.initialize();
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 }
