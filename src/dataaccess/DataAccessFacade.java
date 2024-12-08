@@ -55,6 +55,20 @@ public class DataAccessFacade implements DataAccess {
 		//   userId -> User
 		return (HashMap<String, User>)readFromStorage(StorageType.USERS);
 	}
+
+	public void updateBook(String isbn, Book book) {
+		HashMap<String, Book> books = readBooksMap();
+		System.out.println(books.keySet().toArray().length);
+		books.put(isbn, book);
+		saveToStorage(StorageType.BOOKS, books);
+		System.out.println(books.keySet().toArray().length);
+	}
+
+	public void updateMember(String memberId, LibraryMember member) {
+		HashMap<String, LibraryMember> members = readMemberMap();
+		members.put(memberId, member);
+		saveToStorage(StorageType.MEMBERS, members);
+	}
 	
 	
 	/////load methods - these place test data into the storage area

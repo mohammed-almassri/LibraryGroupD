@@ -4,8 +4,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 
-import javax.swing.JFrame;
-
+import javax.swing.*;
 
 
 public class Main {
@@ -30,4 +29,6 @@ public class Main {
 			int frameWidth = f.getSize().width;
 			f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
 		}
+
+
 }

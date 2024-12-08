@@ -51,6 +51,4 @@ public class SystemController implements ControllerInterface {
 	public User getCurrentUser() {
 		return currentUser;
 	}
-
-
 }

@@ -1,9 +1,19 @@
 package librarysystem;
 
+import business.Book;
+import business.BookCopy;
+import business.Checkout;
+import business.LibraryMember;
+import dataaccess.DataAccess;
+import dataaccess.DataAccessFacade;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class CheckoutBookPanel extends MainWindowPanel {
 
@@ -84,24 +94,43 @@ public class CheckoutBookPanel extends MainWindowPanel {
                 JOptionPane.showMessageDialog(this, "Please enter both Member ID and ISBN.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            DataAccessFacade da = new DataAccessFacade();
 
-            // Placeholder logic: Replace with actual system logic
-            boolean isMemberValid = true; // Check if member exists in the system
-            boolean isBookAvailable = true; // Check if the book is available for checkout
+            LibraryMember m = da.readMemberMap().get(memberId);
+            Book b = da.readBooksMap().get(isbn);
+            Optional<BookCopy> first = Arrays.stream(b.getCopies()).filter(BookCopy::isAvailable).findFirst();
+            BookCopy bc = first.orElse(null);
+            boolean isMemberValid = m != null;
+            boolean isBookAvailable = bc != null; // Check if the book is available for checkout
 
             if (!isMemberValid) {
                 JOptionPane.showMessageDialog(this, "Member ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (!isBookAvailable) {
                 JOptionPane.showMessageDialog(this, "Book not available.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Simulate checkout process
-                String bookTitle = "Sample Book Title"; // Fetch from book details
-                String copyNumber = "1"; // Fetch the next available copy
-                String checkoutDate = "2024-12-08"; // Use current date
-                String dueDate = "2024-12-29"; // Calculate based on max checkout period
+                // Perform checkout process
+                String bookTitle = bc.getBook().getTitle();
+                String copyNumber = String.valueOf(bc.getCopyNum());
+                LocalDate today = LocalDate.now();
+                LocalDate dueDateObj = today.plusDays(bc.getBook().getMaxCheckoutLength());
+                String checkoutDate = today.toString();
+                String dueDate = dueDateObj.toString();
 
-                // Add record to table
-                tableModel.addRow(new Object[]{bookTitle, copyNumber, checkoutDate, dueDate});
+                bc.changeAvailability();
+                da.updateBook(isbn, b);
+
+                Checkout checkout = new Checkout(
+                        m,
+                        bc,
+                        today,
+                        dueDateObj
+                );
+
+                m.addCheckout(checkout);
+                da.updateMember(m.getMemberId(), m);
+
+                // Refresh the checkout table
+                refreshCheckoutTable(m);
 
                 // Display success message
                 JOptionPane.showMessageDialog(this, "Checkout successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -109,6 +138,24 @@ public class CheckoutBookPanel extends MainWindowPanel {
                 this.backListener.onBack();
             }
         };
+    }
+
+    /**
+     * Refresh the JTable to display all checkouts for the given member.
+     */
+    private void refreshCheckoutTable(LibraryMember member) {
+        // Clear the existing rows
+        tableModel.setRowCount(0);
+
+        // Populate the table with all checkouts
+        for (Checkout checkout : member.getCheckouts()) {
+            String bookTitle = checkout.getBookCopy().getBook().getTitle();
+            String copyNumber = String.valueOf(checkout.getBookCopy().getCopyNum());
+            String checkoutDate = checkout.getCheckoutDate().toString();
+            String dueDate = checkout.getReturnDate().toString();
+
+            tableModel.addRow(new Object[]{bookTitle, copyNumber, checkoutDate, dueDate});
+        }
     }
 
 }
