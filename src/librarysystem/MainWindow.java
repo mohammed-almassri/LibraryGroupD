@@ -196,31 +196,17 @@ public class MainWindow extends JFrame implements LibWindow {
     private void setupContent() {
 
         mainPanel = new JPanel();
-
-        welcomePanel = new WelcomePanel("welcome, "+loggedInUser.getId(),()->{
+        BackListener backListener = ()->{
             this.showPanel(welcomePanel);
-        });
-        addMemberPanel = new AddMemberPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        editMemberPanel = new EditMemberPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        addBookPanel = new AddBookPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        addBookCopyPanel = new AddBookCopyPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        checkoutBookPanel = new CheckoutBookPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        printCheckoutRecordPanel = new PrintCheckoutRecordPanel(()->{
-            this.showPanel(welcomePanel);
-        });
-        searchOverdueBooksPanel = new OverdueBookSearchPanel(()->{
-            this.showPanel(welcomePanel);
-        });
+        };
+        welcomePanel = new WelcomePanel("welcome, "+loggedInUser.getId(),backListener);
+        addMemberPanel = new AddMemberPanel(backListener);
+        editMemberPanel = new EditMemberPanel(backListener);
+        addBookPanel = new AddBookPanel(backListener);
+        addBookCopyPanel = new AddBookCopyPanel(backListener);
+        checkoutBookPanel = new CheckoutBookPanel(backListener);
+        printCheckoutRecordPanel = new PrintCheckoutRecordPanel(backListener);
+        searchOverdueBooksPanel = new OverdueBookSearchPanel(backListener);
 
         getContentPane().add(mainPanel);
         showPanel(welcomePanel);
