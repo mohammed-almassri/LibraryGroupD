@@ -74,12 +74,6 @@ public class CheckoutBookPanel extends MainWindowPanel {
         checkoutButton.addActionListener(handleCheckout());
     }
 
-    @Override
-    public void reset() {
-        removeAll();
-        initialize();
-    }
-
     private ActionListener handleCheckout() {
         return e -> {
             String memberId = memberIdField.getText().trim();

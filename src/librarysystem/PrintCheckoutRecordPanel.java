@@ -16,9 +16,4 @@ public class PrintCheckoutRecordPanel extends MainWindowPanel {
         label.setVerticalAlignment(SwingConstants.CENTER);
         add(label, BorderLayout.CENTER);
     }
-
-    @Override
-    public void reset() {
-
-    }
 }

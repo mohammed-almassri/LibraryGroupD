@@ -15,6 +15,7 @@ public class MainWindow extends JFrame implements LibWindow {
 
     private boolean isInitialized = false;
     JPanel mainPanel;
+    MainWindowPanel currentPanel;
     MainWindowPanel welcomePanel;
     MainWindowPanel addMemberPanel;
     MainWindowPanel editMemberPanel;
@@ -227,7 +228,11 @@ public class MainWindow extends JFrame implements LibWindow {
 
     private void showPanel(MainWindowPanel panel) {
         mainPanel.removeAll();
+        if(currentPanel!=null){
+            currentPanel.reset();
+        }
         panel.initialize();
+        currentPanel = panel;
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();

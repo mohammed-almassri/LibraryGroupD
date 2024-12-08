@@ -5,8 +5,10 @@ import javax.swing.*;
 abstract class MainWindowPanel extends JPanel {
     protected BackListener backListener;
     public abstract void initialize();
-    public abstract void reset();
-    
+    public void reset() {
+        removeAll();
+        initialize();
+    }
     public MainWindowPanel(BackListener backListener) {
         this.backListener = backListener;
     }
