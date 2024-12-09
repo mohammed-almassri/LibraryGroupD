@@ -111,6 +111,12 @@ public class PrintCheckoutRecordPanel extends MainWindowPanel {
             String checkoutDate = checkout.getCheckoutDate().toString();
             String dueDate = checkout.getReturnDate().toString();
 
+            System.out.println("Title: " + bookTitle);
+            System.out.println("Copy Number: " + copyNumber);
+            System.out.println("Checkout Date: " + checkoutDate);
+            System.out.println("Due Date: " + dueDate);
+            System.out.println("=======================");
+
             tableModel.addRow(new Object[]{bookTitle, copyNumber, checkoutDate, dueDate});
         }
     }
