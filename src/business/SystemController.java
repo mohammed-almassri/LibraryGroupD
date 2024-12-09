@@ -53,7 +53,7 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public void addNewMember(LibraryMember member) {
+	public void addNewMember(LibraryMember member) throws Exception {
 		DataAccess da = new DataAccessFacade();
 		da.saveNewMember(member);
 	}
