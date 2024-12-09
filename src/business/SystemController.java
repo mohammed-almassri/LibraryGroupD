@@ -55,6 +55,12 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
+	public void addNewMember(LibraryMember member) throws Exception {
+		DataAccess da = new DataAccessFacade();
+		da.saveNewMember(member);
+	}
+
+	@Override
 	public void addBookCopy(String isbn, int numCopies) throws LibrarySystemException {
 		DataAccess da = new DataAccessFacade();
 		Book book = da.searchBook(isbn);

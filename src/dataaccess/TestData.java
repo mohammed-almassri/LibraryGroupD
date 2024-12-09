@@ -25,7 +25,8 @@ import business.BookCopy;
  *
  */
 public class TestData {
-
+	
+	
 	public static void main(String[] args) {
 		// Create storage directory first
 		createStorageDirectory();
@@ -36,8 +37,9 @@ public class TestData {
 		td.userData();
 		td.addTestCheckouts();
 		DataAccess da = new DataAccessFacade();
-		System.out.println("Books loaded: " + da.readBooksMap());
-		System.out.println("Users loaded: " + da.readUserMap());
+		System.out.println(da.readBooksMap());
+		System.out.println(da.readUserMap());
+		System.out.println(da.readMemberMap());
 	}
 
 	///create books
