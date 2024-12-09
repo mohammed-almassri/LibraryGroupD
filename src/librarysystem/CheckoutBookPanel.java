@@ -80,6 +80,9 @@ public class CheckoutBookPanel extends MainWindowPanel {
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
 
+        JButton backButton = new JButton("Back");
+        add(backButton, BorderLayout.SOUTH);
+
         // Add action listener to the checkout button
         checkoutButton.addActionListener(handleCheckout());
     }
@@ -109,33 +112,24 @@ public class CheckoutBookPanel extends MainWindowPanel {
                 JOptionPane.showMessageDialog(this, "Book not available.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 // Perform checkout process
-                String bookTitle = bc.getBook().getTitle();
-                String copyNumber = String.valueOf(bc.getCopyNum());
+
                 LocalDate today = LocalDate.now();
                 LocalDate dueDateObj = today.plusDays(bc.getBook().getMaxCheckoutLength());
-                String checkoutDate = today.toString();
-                String dueDate = dueDateObj.toString();
 
                 bc.changeAvailability();
                 da.updateBook(isbn, b);
-
                 Checkout checkout = new Checkout(
                         m,
                         bc,
                         today,
                         dueDateObj
                 );
-
                 m.addCheckout(checkout);
                 da.updateMember(m.getMemberId(), m);
-
-                // Refresh the checkout table
                 refreshCheckoutTable(m);
-
-                // Display success message
                 JOptionPane.showMessageDialog(this, "Checkout successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                this.reset();
-                this.backListener.onBack();
+               // this.reset();
+              //  this.backListener.onBack();
             }
         };
     }

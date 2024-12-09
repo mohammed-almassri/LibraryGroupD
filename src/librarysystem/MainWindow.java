@@ -34,6 +34,7 @@ public class MainWindow extends JFrame implements LibWindow {
 
     // File menu items
     private JMenuItem logoutItem;
+    private JMenuItem backItem;
     private JMenuItem exitItem;
 
     // Member menu items
@@ -115,13 +116,27 @@ public class MainWindow extends JFrame implements LibWindow {
     private JMenu createFileMenu() {
         JMenu menu = new JMenu("File");
         logoutItem = new JMenuItem("Logout");
+        backItem = new JMenuItem("Home");
+
         exitItem = new JMenuItem("Exit");
 
         logoutItem.addActionListener(e -> {
-            // Implement logout logic
+            ci.logout();
+            setLoggedInUser(null);
+            setVisible(false);
+            //showPanel(welcomePanel);
+            LoginWindow.INSTANCE.setVisible(true);
+        });
+
+        backItem.addActionListener(e -> {
+            if(currentPanel!=null){
+                currentPanel.reset();
+                showPanel(welcomePanel);
+            }
         });
         exitItem.addActionListener(e -> System.exit(0));
 
+        menu.add(backItem);
         menu.add(logoutItem);
         menu.addSeparator();
         menu.add(exitItem);
@@ -217,8 +232,8 @@ public class MainWindow extends JFrame implements LibWindow {
         if(currentPanel!=null){
             currentPanel.reset();
         }
-        panel.initialize();
         currentPanel = panel;
+        currentPanel.initialize();
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
