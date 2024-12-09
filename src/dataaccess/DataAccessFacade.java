@@ -21,11 +21,16 @@ public class DataAccessFacade implements DataAccess {
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
-	public void saveNewMember(LibraryMember member) {
+	public void saveNewMember(LibraryMember member) throws Exception {
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
-		mems.put(memberId, member);
-		saveToStorage(StorageType.MEMBERS, mems);	
+		if (mems.containsKey(memberId)) {
+			String errorMessage = "Could not save Member: " + memberId + " because member with that id exist already.";
+			throw new Exception(errorMessage);
+		} else {
+			mems.put(memberId, member);
+			saveToStorage(StorageType.MEMBERS, mems);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -99,7 +104,9 @@ public class DataAccessFacade implements DataAccess {
 			if(out != null) {
 				try {
 					out.close();
-				} catch(Exception e) {}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -117,13 +124,13 @@ public class DataAccessFacade implements DataAccess {
 			if(in != null) {
 				try {
 					in.close();
-				} catch(Exception e) {}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return retVal;
 	}
-	
-	
 	
 	final static class Pair<S,T> implements Serializable{
 		
