@@ -1,8 +1,5 @@
 package dataaccess;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,19 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import business.Book;
-import business.BookCopy;
 import business.LibraryMember;
-import dataaccess.DataAccessFacade.StorageType;
 
 
 public class DataAccessFacade implements DataAccess {
 	
 	enum StorageType {
-		BOOKS, MEMBERS, USERS;
+		BOOKS, MEMBERS, USERS
 	}
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
-			+ "\\src\\dataaccess\\storage";
+	public static final String OUTPUT_DIR = System.getProperty("user.dir")
+			+ File.separator + "src" + File.separator + "dataaccess" + File.separator + "storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
