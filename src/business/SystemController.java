@@ -51,4 +51,10 @@ public class SystemController implements ControllerInterface {
 	public User getCurrentUser() {
 		return currentUser;
 	}
+
+	@Override
+	public void addNewMember(LibraryMember member) {
+		DataAccess da = new DataAccessFacade();
+		da.saveNewMember(member);
+	}
 }
