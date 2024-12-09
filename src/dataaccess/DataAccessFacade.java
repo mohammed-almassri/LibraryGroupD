@@ -8,6 +8,7 @@ import java.util.List;
 
 import business.Book;
 import business.LibraryMember;
+import business.LibrarySystemException;
 
 
 public class DataAccessFacade implements DataAccess {
@@ -21,12 +22,12 @@ public class DataAccessFacade implements DataAccess {
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
-	public void saveNewMember(LibraryMember member) throws Exception {
+	public void saveNewMember(LibraryMember member) throws LibrarySystemException {
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
 		if (mems.containsKey(memberId)) {
 			String errorMessage = "Could not save Member: " + memberId + " because member with that id exist already.";
-			throw new Exception(errorMessage);
+			throw new LibrarySystemException(errorMessage);
 		} else {
 			mems.put(memberId, member);
 			saveToStorage(StorageType.MEMBERS, mems);
