@@ -1,8 +1,5 @@
 package dataaccess;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,27 +7,31 @@ import java.util.HashMap;
 import java.util.List;
 
 import business.Book;
-import business.BookCopy;
 import business.LibraryMember;
-import dataaccess.DataAccessFacade.StorageType;
+import business.LibrarySystemException;
 
 
 public class DataAccessFacade implements DataAccess {
 	
 	enum StorageType {
-		BOOKS, MEMBERS, USERS;
+		BOOKS, MEMBERS, USERS
 	}
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
-			+ "\\src\\dataaccess\\storage";
+	public static final String OUTPUT_DIR = System.getProperty("user.dir")
+			+ File.separator + "src" + File.separator + "dataaccess" + File.separator + "storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
-	public void saveNewMember(LibraryMember member) {
+	public void saveNewMember(LibraryMember member) throws LibrarySystemException {
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
-		mems.put(memberId, member);
-		saveToStorage(StorageType.MEMBERS, mems);	
+		if (mems.containsKey(memberId)) {
+			String errorMessage = "Could not save Member: " + memberId + " because member with that id exist already.";
+			throw new LibrarySystemException(errorMessage);
+		} else {
+			mems.put(memberId, member);
+			saveToStorage(StorageType.MEMBERS, mems);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -104,7 +105,9 @@ public class DataAccessFacade implements DataAccess {
 			if(out != null) {
 				try {
 					out.close();
-				} catch(Exception e) {}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -122,13 +125,13 @@ public class DataAccessFacade implements DataAccess {
 			if(in != null) {
 				try {
 					in.close();
-				} catch(Exception e) {}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return retVal;
 	}
-	
-	
 	
 	final static class Pair<S,T> implements Serializable{
 		
