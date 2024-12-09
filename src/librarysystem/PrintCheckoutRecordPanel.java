@@ -65,7 +65,7 @@ public class PrintCheckoutRecordPanel extends MainWindowPanel {
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
 
-        // Add action listener to the checkout button
+        // Add action listener to the search button
         searchButton.addActionListener(handleSearch());
     }
 
@@ -81,7 +81,7 @@ public class PrintCheckoutRecordPanel extends MainWindowPanel {
             DataAccessFacade da = new DataAccessFacade();
 
             LibraryMember m = da.readMemberMap().get(memberId);
-            boolean isMemberValid = m != null; // Check if the book is available for checkout
+            boolean isMemberValid = m != null;
 
             if (!isMemberValid) {
                 JOptionPane.showMessageDialog(this, "Member ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
