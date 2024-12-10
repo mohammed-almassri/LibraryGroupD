@@ -12,6 +12,14 @@ AddBookPanel -> AddBookPanel : initialize()
 Administrator -> AddBookPanel : SubmitButtonListener.actionPerformed(e)
 activate AddBookPanel
 
+AddBookPanel -> AddBookPanel : validateInputs()
+
+AddBookPanel -> Book : new(isbn, title, maximumCheckout)
+
+AddBookPanel -> BookCopy : new(book, numberOfCopies)
+
+Book -> BookCopy: updateCopies(book)
+
 AddBookPanel -> SystemController : addNewBook(Book)
 activate SystemController
 
