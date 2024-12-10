@@ -53,7 +53,10 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public void addNewMember(LibraryMember member) throws LibrarySystemException {
+	public void addNewMember(String memberId, String firstName, String lastName, String phone, String street,
+							 String city, String state, String zip) throws LibrarySystemException {
+		Address address = new Address(street, city, state, zip);
+		LibraryMember member = new LibraryMember(memberId, firstName, lastName, phone, address);
 		DataAccess da = new DataAccessFacade();
 		da.saveNewMember(member);
 	}
