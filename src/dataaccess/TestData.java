@@ -42,6 +42,10 @@ public class TestData {
 		allBooks.get(2).addCopy();
 		DataAccessFacade.loadBookMap(allBooks);
 	}
+
+	public List<Author> getAllAuthors(){
+		return allAuthors;
+	}
 	
 	public void userData() {
 		DataAccessFacade.loadUserMap(allUsers);
