@@ -2,28 +2,28 @@
 
 actor User
 
-boundary "LibrarySystem" as ls
-control "SystemController" as sc
-entity "DataAccessFacade" as da
-entity "Book" as b
-entity "BookCopy" as bc
-entity "Checkout" as co
-entity "LibraryMember" as lm
+boundary SearchScreen
+participant SystemController
+participant DataAccessFacade
+participant Book
+participant BookCopy
+participant LibraryMember
+participant Checkout
 
-User -> ls: searchByISBN(isbn)
-ls -> sc: searchOverdueBookCopies(isbn)
+User -> SearchScreen: enter ISBN
+SearchScreen -> SystemController: searchOverdueBookCopies(isbn)
+SystemController -> DataAccessFacade: searchBook(isbn)
+DataAccessFacade -> Book: getCopies()
 
-sc -> da: searchBook(isbn)
-da -> b: getCopies()
-
-alt Book Exists
-    b -> bc: isAvailable()
-    bc -> co: getCheckout()
-    co -> lm: getMember()
-    co -> co: getReturnDate()
-    
-    alt Copy is Overdue
-        ls -> User: displayCopyDetails(copyNum, member, dueDate)
+loop for each BookCopy
+    Book -> BookCopy: isAvailable()
+    alt if not available
+        BookCopy -> DataAccessFacade: getCheckout(isbn, copyNum)
+        DataAccessFacade -> Checkout: getReturnDate()
+        alt if returnDate < today
+            Checkout -> LibraryMember: getMember()
+            SystemController -> SearchScreen: display overdue copy details
+        end
     end
 end
 
