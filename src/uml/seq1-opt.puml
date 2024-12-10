@@ -1,0 +1,33 @@
+@startuml
+actor Administrator
+
+Administrator -> MainWindow : addBookItem.actionPerformed(e)
+activate MainWindow
+
+MainWindow -> AddBookPanel : showPanel(addBookPanel)
+activate AddBookPanel
+
+AddBookPanel -> AddBookPanel : initialize()
+
+Administrator -> AddBookPanel : SubmitButtonListener.actionPerformed(e)
+activate AddBookPanel
+
+AddBookPanel -> SystemController : addNewBook(Book)
+activate SystemController
+
+SystemController -> DataAccessFacade : addBook(book)
+activate DataAccessFacade
+
+DataAccessFacade -> DataAccessFacade : readBooksMap()
+DataAccessFacade -> DataAccessFacade : saveToStorage(StorageType.BOOKS, books)
+
+return
+
+deactivate DataAccessFacade
+
+deactivate SystemController
+
+deactivate AddBookPanel
+
+deactivate MainWindow
+@enduml

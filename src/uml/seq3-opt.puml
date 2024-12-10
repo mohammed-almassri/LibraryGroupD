@@ -1,0 +1,30 @@
+@startuml
+
+actor User
+
+boundary SearchScreen
+participant SystemController
+participant DataAccessFacade
+participant Book
+participant BookCopy
+participant LibraryMember
+participant Checkout
+
+User -> SearchScreen: enter ISBN
+SearchScreen -> SystemController: searchOverdueBookCopies(isbn)
+SystemController -> DataAccessFacade: searchBook(isbn)
+DataAccessFacade -> Book: getCopies()
+
+loop for each BookCopy
+    Book -> BookCopy: isAvailable()
+    alt if not available
+        BookCopy -> DataAccessFacade: getCheckout(isbn, copyNum)
+        DataAccessFacade -> Checkout: getReturnDate()
+        alt if returnDate < today
+            Checkout -> LibraryMember: getMember()
+            SystemController -> SearchScreen: display overdue copy details
+        end
+    end
+end
+
+@enduml
