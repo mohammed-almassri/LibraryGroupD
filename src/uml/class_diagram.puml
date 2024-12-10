@@ -124,5 +124,6 @@ Book "1" -- "1..*" BookCopy
 Book "0..*" --> "1..*" Author
 Checkout "0..*" --> "1" BookCopy
 SystemController ..> DataAccessFacade
+CheckoutBookPanel --> SystemController
 
 @enduml

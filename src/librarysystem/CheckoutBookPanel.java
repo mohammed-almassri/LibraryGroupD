@@ -1,18 +1,16 @@
 package librarysystem;
 
-import business.Book;
-import business.BookCopy;
 import business.Checkout;
 import business.LibraryMember;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessFacade;
+import business.SystemController;
+import business.LibrarySystemException;
+import business.BookCopy;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class CheckoutBookPanel extends MainWindowPanel {
@@ -22,9 +20,11 @@ public class CheckoutBookPanel extends MainWindowPanel {
     private JButton checkoutButton;
     private JTable checkoutTable;
     private DefaultTableModel tableModel;
+    private SystemController controller;
 
     public CheckoutBookPanel(BackListener backListener) {
         super(backListener);
+        controller = new SystemController(); // Initialize the controller
     }
 
     @Override
@@ -97,39 +97,26 @@ public class CheckoutBookPanel extends MainWindowPanel {
                 JOptionPane.showMessageDialog(this, "Please enter both Member ID and ISBN.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            DataAccessFacade da = new DataAccessFacade();
 
-            LibraryMember m = da.readMemberMap().get(memberId);
-            Book b = da.readBooksMap().get(isbn);
-            Optional<BookCopy> first = Arrays.stream(b.getCopies()).filter(BookCopy::isAvailable).findFirst();
-            BookCopy bc = first.orElse(null);
-            boolean isMemberValid = m != null;
-            boolean isBookAvailable = bc != null; // Check if the book is available for checkout
-
-            if (!isMemberValid) {
-                JOptionPane.showMessageDialog(this, "Member ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (!isBookAvailable) {
-                JOptionPane.showMessageDialog(this, "Book not available.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                // Perform checkout process
+            try {
+                LibraryMember member = controller.getLibraryMemberById(memberId);
+                BookCopy bookCopy = controller.checkoutBook(isbn);
 
                 LocalDate today = LocalDate.now();
-                LocalDate dueDateObj = today.plusDays(bc.getBook().getMaxCheckoutLength());
+                LocalDate dueDate = today.plusDays(bookCopy.getBook().getMaxCheckoutLength());
 
-                bc.changeAvailability();
-                da.updateBook(isbn, b);
                 Checkout checkout = new Checkout(
-                        m,
-                        bc,
+                        member,
+                        bookCopy,
                         today,
-                        dueDateObj
+                        dueDate
                 );
-                m.addCheckout(checkout);
-                da.updateMember(m.getMemberId(), m);
-                refreshCheckoutTable(m);
+                member.addCheckout(checkout);
+                controller.updateMemberCheckout(member);
+                refreshCheckoutTable(member);
                 JOptionPane.showMessageDialog(this, "Checkout successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-               // this.reset();
-              //  this.backListener.onBack();
+            } catch (LibrarySystemException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         };
     }
@@ -151,5 +138,4 @@ public class CheckoutBookPanel extends MainWindowPanel {
             tableModel.addRow(new Object[]{bookTitle, copyNumber, checkoutDate, dueDate});
         }
     }
-
 }
