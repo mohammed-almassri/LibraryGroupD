@@ -29,8 +29,6 @@ package business {
   }
 
   class Book {
-   - BookCopy[] copies
-   - List<Author> authors
    - String isbn
    - String title
    - int maxCheckoutLength
@@ -40,7 +38,6 @@ package business {
   }
 
   class BookCopy {
-   - Book book
    - int copyNum
    - boolean isAvailable
    + getCopyNum() : int
@@ -49,13 +46,10 @@ package business {
 
   class LibraryMember extends Person {
    - String memberId
-   - List<Checkout> checkouts
    + getMemberId() : String
   }
 
   class Checkout {
-   - LibraryMember member
-   - BookCopy bookCopy
    - LocalDate checkoutDate
    - LocalDate returnDate
    + getMember() : LibraryMember
@@ -80,7 +74,6 @@ package dataaccess {
   class User {
    - String id
    - String password
-   - Auth authorization
    + getId() : String
    + getPassword() : String
    + getAuthorization() : Auth
@@ -117,15 +110,19 @@ package librarysystem {
    + isInitialized() : boolean
    + setVisible(boolean b) : void
   }
+
+  class CheckoutBookPanel extends MainWindow {
+ 
+  }
 }
 
-Address "1" -- "1" Person
-Person <|-- Author
-LibraryMember "1" -- "*" Checkout
-Book "1" -- "*" BookCopy
-Book "*" -- "*" Author
-Checkout "1" -- "1" BookCopy
-Checkout "1" -- "1" LibraryMember
-SystemController <|-- DataAccessFacade
+Auth "1" <-- "0..*" User
+SystemController  --> User
+Address "1" <-- "0..*" Person
+LibraryMember "1" -- "0..*" Checkout
+Book "1" -- "1..*" BookCopy
+Book "0..*" --> "1..*" Author
+Checkout "0..*" --> "1" BookCopy
+SystemController ..> DataAccessFacade
 
 @enduml
