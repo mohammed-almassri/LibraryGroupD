@@ -2,33 +2,29 @@
 
 actor User
 
-boundary "Search Screen" as searchScreen
-entity "Library System" as librarySystem
-entity "DataAccess" as dataAccess
-entity "OverdueBookSearchPanel" as overduePanel
-entity "LibraryMember" as libraryMember
-entity "Checkout" as checkout
+boundary "LibrarySystem" as ls
+control "SystemController" as sc
+entity "DataAccessFacade" as da
+entity "Book" as b
+entity "BookCopy" as bc
+entity "Checkout" as co
+entity "LibraryMember" as lm
 
-User -> searchScreen: Search Book by ISBN
-searchScreen -> librarySystem: getBook(isbn)
-librarySystem -> dataAccess: readBooksMap()
-dataAccess --> librarySystem: Map<String, Book>
-librarySystem -> overduePanel: displayBookDetails(book)
-overduePanel -> librarySystem: getCheckoutsByBook(book)
-librarySystem -> dataAccess: readMemberMap()
-dataAccess --> librarySystem: Map<String, LibraryMember>
+User -> ls: searchByISBN(isbn)
+ls -> sc: searchOverdueBookCopies(isbn)
 
-alt Book Is Checked Out
-    librarySystem -> checkout: isOverdue()
-    checkout --> librarySystem: boolean
-    librarySystem -> libraryMember: getMemberId()
-    overduePanel -> libraryMember: getCheckouts()
-    libraryMember --> overduePanel: List<Checkout>
-    overduePanel -> User: Display Overdue Information
-end
+sc -> da: searchBook(isbn)
+da -> b: getCopies()
 
-alt Book Is Not Checked Out
-    overduePanel -> User: Display Book Available
+alt Book Exists
+    b -> bc: isAvailable()
+    bc -> co: getCheckout()
+    co -> lm: getMember()
+    co -> co: getReturnDate()
+    
+    alt Copy is Overdue
+        ls -> User: displayCopyDetails(copyNum, member, dueDate)
+    end
 end
 
 @enduml
