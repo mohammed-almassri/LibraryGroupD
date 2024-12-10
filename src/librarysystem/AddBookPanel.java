@@ -75,8 +75,11 @@ public class AddBookPanel extends MainWindowPanel {
                             JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
-                if (num >= 0)
+                if (num > 0)
                     return true;
+                JOptionPane.showMessageDialog(AddBookPanel.this,
+                        "The maximum checkout should be larger than 0", "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         });
@@ -102,8 +105,11 @@ public class AddBookPanel extends MainWindowPanel {
                             JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
-                if (num >= 0)
+                if (num > 0)
                     return true;
+                JOptionPane.showMessageDialog(AddBookPanel.this,
+                        "The number of copies should be larger than 0", "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         });
@@ -158,7 +164,7 @@ public class AddBookPanel extends MainWindowPanel {
                 Book book = new Book(isbn, title, Integer.parseInt(maximum), selectedAuthors);
                 BookCopy bookCopy = new BookCopy(book, Integer.parseInt(numberOfCopies));
                 book.updateCopies(bookCopy);
-                ci.addNewBook(new Book(isbn, title, Integer.parseInt(maximum), selectedAuthors));
+                ci.addNewBook(book);
                 JOptionPane.showMessageDialog(AddBookPanel.this, "Book was added successfully!");
                 clearFields();
             } catch (Exception ex) {
