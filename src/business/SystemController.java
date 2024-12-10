@@ -53,8 +53,15 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public void addNewMember(LibraryMember member) throws LibrarySystemException {
-		DataAccess da = new DataAccessFacade();
-		da.saveNewMember(member);
+	public void addNewMember(LibraryMember member) throws Exception {
+		if (currentAuth == null || currentUser == null) {
+			throw new LoginException("User not logged in");
+		}
+		if (currentAuth == Auth.ADMIN || currentAuth == Auth.BOTH) {
+			DataAccess da = new DataAccessFacade();
+			da.saveNewMember(member);
+		} else {
+			throw new LoginException("User not authorized");
+		}
 	}
 }
