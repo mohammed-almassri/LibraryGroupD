@@ -1,9 +1,7 @@
 package business;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import dataaccess.Auth;
 import dataaccess.DataAccess;
@@ -113,4 +111,42 @@ public class SystemController implements ControllerInterface {
 		DataAccess da = new DataAccessFacade();
 		da.addBook(book);
 	}
+
+
+	public LibraryMember getLibraryMemberById(String memberId) throws LibrarySystemException {
+		DataAccess da = new DataAccessFacade();
+		LibraryMember member = da.readMemberMap().get(memberId);
+
+		if (member == null) {
+			throw new LibrarySystemException("Member with ID " + memberId + " not found.");
+		}
+		return member;
+	}
+
+
+	public BookCopy checkoutBook(String isbn) throws LibrarySystemException {
+		DataAccess da = new DataAccessFacade();
+		Book book = da.readBooksMap().get(isbn);
+
+		if (book == null) {
+			throw new LibrarySystemException("Book with ISBN " + isbn + " not found.");
+		}
+
+		BookCopy availableCopy = book.getNextAvailableCopy();
+
+		if (availableCopy == null) {
+			throw new LibrarySystemException("No available copies for book with ISBN " + isbn);
+		}
+
+		availableCopy.changeAvailability(); // Mark the copy as checked out
+		da.updateBook(isbn, book); // Update book record
+		return availableCopy;
+	}
+
+
+	public void updateMemberCheckout(LibraryMember member) throws LibrarySystemException {
+		DataAccess da = new DataAccessFacade();
+		da.updateMember(member.getMemberId(), member);
+	}
+
 }
