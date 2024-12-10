@@ -1,5 +1,5 @@
 @startuml
-
+autonumber
 actor Admin as A
 participant "LibrarySystem" as LS
 participant "MainWindow" as MW

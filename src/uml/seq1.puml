@@ -1,4 +1,5 @@
 @startuml
+autonumber
 actor User
 participant "LoginWindow" as LW
 participant "SystemController" as SC

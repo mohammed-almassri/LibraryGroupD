@@ -1,4 +1,5 @@
 @startuml
+autonumber
 actor Librarian
 participant "MainWindow" as MW
 participant "PrintCheckoutRecordPanel" as PCRP

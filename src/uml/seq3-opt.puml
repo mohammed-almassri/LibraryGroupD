@@ -1,8 +1,8 @@
 @startuml
-
+autonumber
 actor User
 
-boundary SearchScreen
+participant SearchScreen
 participant SystemController
 participant DataAccessFacade
 participant Book

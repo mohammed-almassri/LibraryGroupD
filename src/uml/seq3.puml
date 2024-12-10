@@ -1,5 +1,5 @@
 @startuml
-
+autonumber
 actor Librarian
 
 Librarian -> CheckoutBookPanel : enter memberId, isbn
@@ -42,10 +42,6 @@ else member found
         activate DataAccessFacade
         deactivate DataAccessFacade
 
-        CheckoutBookPanel -> JTable : refreshCheckoutTable(m)
-        activate JTable
-        deactivate JTable
-        
         CheckoutBookPanel -> Librarian : display "Checkout successful!"
     end
 end
