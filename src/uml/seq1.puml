@@ -1,0 +1,39 @@
+@startuml
+actor User
+participant "LoginWindow" as LW
+participant "SystemController" as SC
+participant "DataAccessFacade" as DAF
+participant "User" as U
+
+User -> LW: Enter ID and Password
+User -> LW: Click Submit
+activate LW
+
+LW -> SC: login(id, password)
+activate SC
+
+SC -> DAF: readUserMap()
+activate DAF
+
+DAF -> DAF: Retrieve User Map
+return User Map
+
+deactivate DAF
+
+SC -> U: getPassword()
+deactivate SC
+
+alt ID not found
+  SC -> LW: throw LoginException("ID not found")
+  LW -> User: Display "ID not found" message
+else Password incorrect
+  SC -> LW: throw LoginException("Password incorrect")
+  LW -> User: Display "Password incorrect" message
+else Successful login
+  SC -> U: getAuthorization()
+  SC -> LW: Return Authorization Level
+  LW -> User: Display Features based on Authorization Level
+end
+
+deactivate LW
+@enduml

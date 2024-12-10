@@ -1,0 +1,23 @@
+@startuml
+actor Administrator
+
+Administrator -> AddMemberPanel : initialize()
+activate AddMemberPanel
+
+Administrator -> AddMemberPanel : enterMemberDetails()
+AddMemberPanel -> SystemController : addNewMember(memberId, firstName, lastName, phone, street, city, state, zip)
+activate SystemController
+
+SystemController -> DataAccessFacade : saveNewMember(LibraryMember)
+activate DataAccessFacade
+
+DataAccessFacade -> DataAccessFacade : readMemberMap()
+DataAccessFacade -> DataAccessFacade : saveToStorage(StorageType.MEMBERS)
+deactivate DataAccessFacade
+
+deactivate SystemController
+
+Administrator <- AddMemberPanel : confirmationMessage()
+deactivate AddMemberPanel
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+
+actor Admin as A
+participant "LibrarySystem" as LS
+participant "MainWindow" as MW
+participant "SystemController" as SC
+participant "DataAccessFacade" as DAF
+
+A -> LS : select 'Add Book Copy'
+LS -> MW : showAddBookCopyPanel()
+MW -> SC : addBookCopy(String isbn)
+SC -> DAF : readBooksMap()
+DAF --> SC : HashMap<String, Book>
+SC -> DAF : updateBook(String isbn, Book)
+DAF --> SC : void
+SC --> MW : void
+MW --> LS : void
+
+@enduml

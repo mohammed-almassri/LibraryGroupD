@@ -1,0 +1,34 @@
+@startuml
+
+actor User
+
+boundary "Search Screen" as searchScreen
+entity "Library System" as librarySystem
+entity "DataAccess" as dataAccess
+entity "OverdueBookSearchPanel" as overduePanel
+entity "LibraryMember" as libraryMember
+entity "Checkout" as checkout
+
+User -> searchScreen: Search Book by ISBN
+searchScreen -> librarySystem: getBook(isbn)
+librarySystem -> dataAccess: readBooksMap()
+dataAccess --> librarySystem: Map<String, Book>
+librarySystem -> overduePanel: displayBookDetails(book)
+overduePanel -> librarySystem: getCheckoutsByBook(book)
+librarySystem -> dataAccess: readMemberMap()
+dataAccess --> librarySystem: Map<String, LibraryMember>
+
+alt Book Is Checked Out
+    librarySystem -> checkout: isOverdue()
+    checkout --> librarySystem: boolean
+    librarySystem -> libraryMember: getMemberId()
+    overduePanel -> libraryMember: getCheckouts()
+    libraryMember --> overduePanel: List<Checkout>
+    overduePanel -> User: Display Overdue Information
+end
+
+alt Book Is Not Checked Out
+    overduePanel -> User: Display Book Available
+end
+
+@enduml

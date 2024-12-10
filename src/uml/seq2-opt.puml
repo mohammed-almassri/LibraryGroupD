@@ -1,0 +1,33 @@
+@startuml
+actor Librarian
+participant "MainWindow" as MW
+participant "PrintCheckoutRecordPanel" as PCRP
+participant "DataAccessFacade" as DAF
+participant "LibraryMember" as LM
+participant "Checkout" as CO
+
+Librarian -> MW: Click Print Checkout Record
+activate MW
+MW -> PCRP: showPanel(PrintCheckoutRecordPanel)
+deactivate MW
+activate PCRP
+
+PCRP -> DAF: readMemberMap()
+activate DAF
+DAF --> PCRP: Map<String, LibraryMember>
+deactivate DAF
+
+PCRP -> LM: getCheckouts()
+activate LM
+LM -> CO: Iterate over checkouts
+activate CO
+CO -> PCRP: Book Title, Copy Number, Checkout Date, Due Date
+
+PCRP -> Console: Print Checkout Record
+
+CO --> LM: return
+LM --> PCRP: return
+
+PCRP --> Librarian: Displayed on Console
+
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+
+actor Librarian
+
+Librarian -> CheckoutBookPanel : enter memberId, isbn
+activate CheckoutBookPanel
+
+CheckoutBookPanel -> DataAccessFacade : readMemberMap()
+activate DataAccessFacade
+DataAccessFacade --> CheckoutBookPanel : member
+
+deactivate DataAccessFacade
+
+alt member not found
+    CheckoutBookPanel -> Librarian : display "Member ID not found."
+else member found
+    CheckoutBookPanel -> DataAccessFacade : readBooksMap()
+    activate DataAccessFacade
+    DataAccessFacade --> CheckoutBookPanel : book
+    deactivate DataAccessFacade
+    
+    alt book not found or no available copies
+        CheckoutBookPanel -> Librarian : display "Book not available."
+    else book found and available
+        CheckoutBookPanel -> BookCopy : changeAvailability()
+        activate BookCopy
+        deactivate BookCopy
+        
+        CheckoutBookPanel -> DataAccessFacade : updateBook(isbn, book)
+        activate DataAccessFacade
+        deactivate DataAccessFacade
+        
+        CheckoutBookPanel -> Checkout : create checkout
+        activate Checkout
+        deactivate Checkout
+        
+        CheckoutBookPanel -> LibraryMember : addCheckout(checkout)
+        activate LibraryMember
+        deactivate LibraryMember
+        
+        CheckoutBookPanel -> DataAccessFacade : updateMember(memberId, member)
+        activate DataAccessFacade
+        deactivate DataAccessFacade
+
+        CheckoutBookPanel -> JTable : refreshCheckoutTable(m)
+        activate JTable
+        deactivate JTable
+        
+        CheckoutBookPanel -> Librarian : display "Checkout successful!"
+    end
+end
+
+deactivate CheckoutBookPanel
+
+@enduml
