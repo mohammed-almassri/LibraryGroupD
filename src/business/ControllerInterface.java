@@ -10,6 +10,6 @@ public interface ControllerInterface {
 	List<String> allMemberIds();
 	List<String> allBookIds();
 	User getCurrentUser();
-	void addNewMember(LibraryMember member) throws Exception;
+	void addNewMember(LibraryMember member) throws LibrarySystemException;
 	void addNewBook(Book book) throws Exception;
 }
