@@ -1,9 +1,6 @@
 package librarysystem;
 
-import business.Author;
-import business.Book;
-import business.ControllerInterface;
-import business.SystemController;
+import business.*;
 import dataaccess.TestData;
 
 import javax.swing.*;
@@ -64,8 +61,54 @@ public class AddBookPanel extends MainWindowPanel {
         gbc.gridy = row;
         formPanel.add(new JLabel("Maximum Checkout:"), gbc);
         maximumCheckoutField = new JTextField();
+        maximumCheckoutField.setInputVerifier(new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                String text = ((JTextField) input).getText();
+                int num;
+                try {
+                    num = Integer.parseInt(text);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(AddBookPanel.this,
+                            "This field should be integer", "Validation Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                if (num >= 0)
+                    return true;
+                return false;
+            }
+        });
         gbc.gridx = 1;
         formPanel.add(maximumCheckoutField, gbc);
+
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        formPanel.add(new JLabel("Number of Copies:"), gbc);
+        numberOfCopiesField = new JTextField();
+        numberOfCopiesField.setInputVerifier(new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                String text = ((JTextField) input).getText();
+                int num;
+                try {
+                    num = Integer.parseInt(text);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(AddBookPanel.this,
+                            "This field should be integer", "Validation Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                if (num >= 0)
+                    return true;
+                return false;
+            }
+        });
+        gbc.gridx = 1;
+        formPanel.add(numberOfCopiesField, gbc);
 
 
         TestData t = new TestData();
@@ -97,19 +140,24 @@ public class AddBookPanel extends MainWindowPanel {
             String isbn = isbnField.getText();
             String title = titleField.getText();
             String maximum = maximumCheckoutField.getText();
+            String numberOfCopies = numberOfCopiesField.getText();
             selectedAuthors = authorList.getSelectedValuesList();
 
             // Basic validation
             if (isbn.isEmpty() || title.isEmpty() || maximum.isEmpty() || selectedAuthors.isEmpty()
+                    || numberOfCopies.isEmpty()
             ) {
                 JOptionPane.showMessageDialog(AddBookPanel.this,
-                        "ISBN, Title, Maximum Of checkout, Number of copies, author fields are required.", "Validation Error",
+                        "ISBN, Title, Maximum Of checkout, Number of copies, author fields, number of copies are required.", "Validation Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Persist data
             try {
+                Book book = new Book(isbn, title, Integer.parseInt(maximum), selectedAuthors);
+                BookCopy bookCopy = new BookCopy(book, Integer.parseInt(numberOfCopies));
+                book.updateCopies(bookCopy);
                 ci.addNewBook(new Book(isbn, title, Integer.parseInt(maximum), selectedAuthors));
                 JOptionPane.showMessageDialog(AddBookPanel.this, "Book was added successfully!");
                 clearFields();
@@ -123,6 +171,7 @@ public class AddBookPanel extends MainWindowPanel {
         isbnField.setText("");
         titleField.setText("");
         maximumCheckoutField.setText("");
+        numberOfCopiesField.setText("");
         authorList.clearSelection();
     }
 }
