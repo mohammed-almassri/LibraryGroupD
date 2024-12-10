@@ -2,18 +2,46 @@
 autonumber
 actor Admin as A
 participant "LibrarySystem" as LS
-participant "MainWindow" as MW
+participant "AddBookCopyPanel" as MW
 participant "SystemController" as SC
 participant "DataAccessFacade" as DAF
+participant "Book" as BK
 
 A -> LS : select 'Add Book Copy'
+activate LS
+
 LS -> MW : showAddBookCopyPanel()
-MW -> SC : addBookCopy(String isbn)
-SC -> DAF : readBooksMap()
-DAF --> SC : HashMap<String, Book>
-SC -> DAF : updateBook(String isbn, Book)
+activate MW
+
+MW -> SC : addBookCopy(isbn, copies)
+activate SC
+
+SC -> DAF : <<create>>
+activate DAF
+
+SC -> DAF : searchBook(isbn)
+DAF -> DAF : readBooksMap()
+loop
+    SC -> BK : addCopy()
+end
+activate BK
+deactivate BK
+
+SC -> DAF : updateBook(isbn, book)
+DAF -> DAF : readBooksMap()
+'DAF -> BK : put(isbn, book)
+DAF -> DAF : saveToStorage(StorageType.BOOKS, books)
 DAF --> SC : void
+deactivate DAF
+
+
+'DAF --> SC : HashMap<String, Book>
+'SC -> DAF : updateBook(String isbn, Book)
+'DAF --> SC : void
 SC --> MW : void
 MW --> LS : void
+LS --> A : feedback
+
+@enduml
 
 @enduml

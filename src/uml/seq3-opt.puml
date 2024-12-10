@@ -10,21 +10,64 @@ participant BookCopy
 participant LibraryMember
 participant Checkout
 
+activate SearchScreen
+
 User -> SearchScreen: enter ISBN
 SearchScreen -> SystemController: searchOverdueBookCopies(isbn)
+
+activate SystemController
+
+SystemController -> DataAccessFacade: <<create>>
+activate DataAccessFacade
+
 SystemController -> DataAccessFacade: searchBook(isbn)
-DataAccessFacade -> Book: getCopies()
+DataAccessFacade -> DataAccessFacade : readBooksMap()
+DataAccessFacade --> SystemController
+
+
+SystemController -> Book: getCopies()
+activate Book
+
 
 loop for each BookCopy
+    SystemController -> BookCopy : getCopyNum()
+    activate BookCopy
+    SystemController -> DataAccessFacade: getCheckout(isbn, copyNum)
     Book -> BookCopy: isAvailable()
-    alt if not available
-        BookCopy -> DataAccessFacade: getCheckout(isbn, copyNum)
-        DataAccessFacade -> Checkout: getReturnDate()
-        alt if returnDate < today
-            Checkout -> LibraryMember: getMember()
-            SystemController -> SearchScreen: display overdue copy details
+    DataAccessFacade -> DataAccessFacade : readMemberMap()
+
+    loop for each member
+        DataAccessFacade -> LibraryMember : getCheckout()
+        activate LibraryMember
+
+        loop for each checkout
+            DataAccessFacade -> Checkout : getBookCopy()
+            activate Checkout
+
+            DataAccessFacade -> BookCopy : getBook()
+            DataAccessFacade -> Book: getIsbn()
         end
+
     end
+
+    deactivate BookCopy
+    deactivate Checkout
+    deactivate LibraryMember
+    deactivate DataAccessFacade
+
+    SystemController -> Checkout : getReturnDate()
+
 end
+
+deactivate Book
+
+
+
+deactivate DataAccessFacade
+
+deactivate SystemController
+
+
+
 
 @enduml
