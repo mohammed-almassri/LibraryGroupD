@@ -3,7 +3,10 @@ package dataaccess;
 import java.util.HashMap;
 
 import business.Book;
+import business.Checkout;
 import business.LibraryMember;
+//import dataaccess.DataAccessFacade.StorageType;
+import business.Checkout;
 import business.LibrarySystemException;
 
 public interface DataAccess { 
@@ -12,4 +15,8 @@ public interface DataAccess {
 	HashMap<String, LibraryMember> readMemberMap();
 	void saveNewMember(LibraryMember member) throws LibrarySystemException;
 	void addBook(Book book) throws LibrarySystemException;
+    public void updateMember(String memberId, LibraryMember member);
+    public void updateBook(String isbn, Book book);    // needed for task #4
+    public Book searchBook(String isbn);
+    public Checkout getCheckout(String isbn, int copyNum);     // optional feature #3
 }
