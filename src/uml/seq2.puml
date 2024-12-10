@@ -1,24 +1,43 @@
 @startuml
 autonumber
 actor Administrator
+activate Administrator
 
-Administrator -> AddMemberPanel : initialize()
+Administrator -> AddMemberPanel :: add Member
 activate AddMemberPanel
 
-Administrator -> AddMemberPanel : enterMemberDetails()
-AddMemberPanel -> SystemController : addNewMember(memberId, firstName, lastName, phone, street, city, state, zip)
+AddMemberPanel -> AddMemberPanel :: handle
+activate AddMemberPanel
+Administrator -> AddMemberPanel :: submit
+AddMemberPanel -> SystemController :: addNewMember
 activate SystemController
+deactivate AddMemberPanel
 
-SystemController -> DataAccessFacade : saveNewMember(LibraryMember)
+SystemController -> Address :: new
+activate Address
+deactivate Address
+
+SystemController -> LibraryMember :: new
+activate LibraryMember
+deactivate LibraryMember
+
+SystemController -> DataAccessFacade :: new
 activate DataAccessFacade
+SystemController -> DataAccessFacade :: saveNewMember
 
-DataAccessFacade -> DataAccessFacade : readMemberMap()
-DataAccessFacade -> DataAccessFacade : saveToStorage(StorageType.MEMBERS)
+DataAccessFacade -> DataAccessFacade :: readMemberMap
+activate DataAccessFacade
+deactivate DataAccessFacade
+DataAccessFacade -> DataAccessFacade :: saveToStorage
+activate DataAccessFacade
 deactivate DataAccessFacade
 
+deactivate DataAccessFacade
 deactivate SystemController
 
-Administrator <- AddMemberPanel : confirmationMessage()
+Administrator <- AddMemberPanel :: confirmationMessage
 deactivate AddMemberPanel
+
+deactivate Administrator
 
 @enduml
