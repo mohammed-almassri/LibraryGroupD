@@ -64,4 +64,10 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("User not authorized");
 		}
 	}
+
+	@Override
+	public void addNewBook(Book book) throws LibrarySystemException {
+		DataAccess da = new DataAccessFacade();
+		da.addBook(book);
+	}
 }

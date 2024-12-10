@@ -11,4 +11,5 @@ public interface ControllerInterface {
 	List<String> allBookIds();
 	User getCurrentUser();
 	void addNewMember(LibraryMember member) throws Exception;
+	void addNewBook(Book book) throws Exception;
 }
