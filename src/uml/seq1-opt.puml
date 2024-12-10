@@ -1,33 +1,31 @@
 @startuml
 actor Administrator
 
-Administrator -> MainWindow : addBookItem.actionPerformed(e)
+Administrator -> MainWindow : 1. addBookItem.actionPerformed(e)
 activate MainWindow
 
-MainWindow -> AddBookPanel : showPanel(addBookPanel)
+MainWindow -> AddBookPanel : 2. showPanel(addBookPanel)
 activate AddBookPanel
 
-AddBookPanel -> AddBookPanel : initialize()
+AddBookPanel -> AddBookPanel : 3. initialize()
 
-Administrator -> AddBookPanel : SubmitButtonListener.actionPerformed(e)
+Administrator -> AddBookPanel : 4. SubmitButtonListener.actionPerformed(e)
 activate AddBookPanel
 
-AddBookPanel -> AddBookPanel : validateInputs()
+AddBookPanel -> Book : 5. new(isbn, title, maximumCheckout)
 
-AddBookPanel -> Book : new(isbn, title, maximumCheckout)
+AddBookPanel -> BookCopy : 6. new(book, numberOfCopies)
 
-AddBookPanel -> BookCopy : new(book, numberOfCopies)
+Book -> BookCopy: 7. updateCopies(book)
 
-Book -> BookCopy: updateCopies(book)
-
-AddBookPanel -> SystemController : addNewBook(Book)
+AddBookPanel -> SystemController : 8. addNewBook(Book)
 activate SystemController
 
-SystemController -> DataAccessFacade : addBook(book)
+SystemController -> DataAccessFacade : 9. addBook(book)
 activate DataAccessFacade
 
-DataAccessFacade -> DataAccessFacade : readBooksMap()
-DataAccessFacade -> DataAccessFacade : saveToStorage(StorageType.BOOKS, books)
+DataAccessFacade -> DataAccessFacade : 10. readBooksMap()
+DataAccessFacade -> DataAccessFacade : 11. saveToStorage(StorageType.BOOKS, books)
 
 return
 
