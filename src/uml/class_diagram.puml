@@ -1,0 +1,131 @@
+@startuml
+
+package business {
+  class Address {
+   - String street
+   - String city
+   - String state
+   - String zip
+   + getStreet() : String
+   + getCity() : String
+   + getState() : String
+   + getZip() : String
+  }
+
+  class Person {
+   - String firstName
+   - String lastName
+   - String telephone
+   - Address address
+   + getFirstName() : String
+   + getLastName() : String
+   + getTelephone() : String
+   + getAddress() : Address
+  }
+
+  class Author extends Person {
+   - String bio
+   + getBio() : String
+  }
+
+  class Book {
+   - BookCopy[] copies
+   - List<Author> authors
+   - String isbn
+   - String title
+   - int maxCheckoutLength
+   + getTitle() : String
+   + getIsbn() : String
+   + getAuthors() : List<Author>
+  }
+
+  class BookCopy {
+   - Book book
+   - int copyNum
+   - boolean isAvailable
+   + getCopyNum() : int
+   + isAvailable() : boolean
+  }
+
+  class LibraryMember extends Person {
+   - String memberId
+   - List<Checkout> checkouts
+   + getMemberId() : String
+  }
+
+  class Checkout {
+   - LibraryMember member
+   - BookCopy bookCopy
+   - LocalDate checkoutDate
+   - LocalDate returnDate
+   + getMember() : LibraryMember
+   + getBookCopy() : BookCopy
+  }
+
+  class SystemController {
+   + login(String id, String password) : void
+   + logout() : void
+   + allMemberIds() : List<String>
+   + allBookIds() : List<String>
+  }
+}
+
+package dataaccess {
+  enum Auth {
+   LIBRARIAN
+   ADMIN
+   BOTH
+  }
+
+  class User {
+   - String id
+   - String password
+   - Auth authorization
+   + getId() : String
+   + getPassword() : String
+   + getAuthorization() : Auth
+  }
+
+  interface DataAccess {
+   + readBooksMap() : HashMap<String, Book>
+   + readUserMap() : HashMap<String, User>
+   + readMemberMap() : HashMap<String, LibraryMember>
+  }
+
+  class DataAccessFacade implements DataAccess {
+   + readBooksMap() : HashMap<String, Book>
+   + readUserMap() : HashMap<String, User>
+   + readMemberMap() : HashMap<String, LibraryMember>
+  }
+}
+
+package librarysystem {
+  interface LibWindow {
+   + init() : void
+   + isInitialized() : boolean
+   + setVisible(boolean b) : void
+  }
+
+  class LibrarySystem implements LibWindow {
+   + init() : void
+   + isInitialized() : boolean
+   + setVisible(boolean b) : void
+  }
+
+  class MainWindow extends JFrame implements LibWindow {
+   + init() : void
+   + isInitialized() : boolean
+   + setVisible(boolean b) : void
+  }
+}
+
+Address "1" -- "1" Person
+Person <|-- Author
+LibraryMember "1" -- "*" Checkout
+Book "1" -- "*" BookCopy
+Book "*" -- "*" Author
+Checkout "1" -- "1" BookCopy
+Checkout "1" -- "1" LibraryMember
+SystemController <|-- DataAccessFacade
+
+@enduml
