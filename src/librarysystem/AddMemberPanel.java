@@ -109,7 +109,7 @@ public class AddMemberPanel extends MainWindowPanel {
 
             // Persist data
             try {
-                ci.addNewMember(new LibraryMember(memberId, firstName, lastName, phone, new Address(street, city, state, zip)));
+                ci.addNewMember(memberId, firstName, lastName, phone, street, city, state, zip);
                 JOptionPane.showMessageDialog(AddMemberPanel.this, "Member added successfully!");
                 clearFields();
             } catch (Exception ex) {
