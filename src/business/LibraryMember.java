@@ -33,6 +33,10 @@ final public class LibraryMember extends Person implements Serializable {
 	public List<Checkout> getCheckouts() {
 		return Collections.unmodifiableList(checkouts);
 	}
+
+	public boolean isEmptyCheckouts() {
+		return checkouts.isEmpty();
+	}
 	
 	@Override
 	public String toString() {
